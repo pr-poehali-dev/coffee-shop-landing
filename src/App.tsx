@@ -1,28 +1,56 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import Navigation from "@/components/Navigation";
+import Hero from "@/components/Hero";
+import About from "@/components/About";
+import Menu from "@/components/Menu";
+import Gallery from "@/components/Gallery";
+import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Эффект для анимации при прокрутке
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+    document.querySelectorAll(".animate-on-scroll").forEach((element) => {
+      observer.observe(element);
+    });
+
+    return () => {
+      document.querySelectorAll(".animate-on-scroll").forEach((element) => {
+        observer.unobserve(element);
+      });
+    };
+  }, []);
+
+  return (
     <TooltipProvider>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main>
+          <Hero />
+          <About />
+          <Menu />
+          <Gallery />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
     </TooltipProvider>
-  </QueryClientProvider>
-);
+  );
+};
 
 export default App;
